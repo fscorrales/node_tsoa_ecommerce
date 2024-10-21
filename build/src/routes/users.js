@@ -1,0 +1,18 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const main_1 = require("../validators/main");
+const users_1 = require("../validators/users");
+const users_2 = require("../handlers/users");
+const token_1 = require("../security/token");
+const usersRouter = (0, express_1.Router)();
+usersRouter.post('/', token_1.verifyToken, token_1.authorizeAdmin, users_1.validateCreate, users_2.createOne);
+usersRouter.get('/me', token_1.verifyToken, users_2.getMe);
+usersRouter.get('/:id', token_1.verifyToken, main_1.validateObjectId, users_2.getOne);
+usersRouter.get('/', token_1.verifyToken, users_1.validateQuery, users_2.getAllActive);
+usersRouter.get('/deleted', token_1.verifyToken, token_1.authorizeAdmin, users_1.validateQuery, users_2.getAllDeleted);
+usersRouter.get('/include_deleted', token_1.verifyToken, token_1.authorizeAdmin, users_1.validateQuery, users_2.getAll);
+usersRouter.put('/:id', token_1.verifyToken, main_1.validateObjectId, token_1.authorizeAdminOrSameUser, users_1.validateUpdate, users_2.updateOne);
+usersRouter.delete('/:id', token_1.verifyToken, main_1.validateObjectId, token_1.authorizeAdminOrSameUser, users_2.deleteOne);
+usersRouter.delete('/delete_forever/:id', token_1.verifyToken, token_1.authorizeAdmin, main_1.validateObjectId, users_2.deleteOneForever);
+exports.default = usersRouter;
